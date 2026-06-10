@@ -6,7 +6,7 @@ WORKDIR /app/frontend
 
 # Copy dependencies manifest
 COPY frontend/package*.json ./
-RUN npm ci
+RUN npm install
 
 # Copy source files
 COPY frontend/ ./
@@ -26,7 +26,7 @@ WORKDIR /app
 
 # Copy dependencies manifest
 COPY package*.json ./
-RUN npm ci
+RUN npm install
 
 # Copy Prisma schema
 COPY prisma ./prisma/
@@ -54,7 +54,7 @@ ENV PORT=10000
 
 # Install production dependencies only
 COPY package*.json ./
-RUN npm ci --omit=dev
+RUN npm install --omit=dev
 
 # Copy generated Prisma Client from builder to keep it in sync
 COPY --from=backend-builder /app/node_modules/.prisma ./node_modules/.prisma
