@@ -1,7 +1,7 @@
 # ==========================================
 # STAGE 1: Build Frontend (Vite/React)
 # ==========================================
-FROM node:18-alpine AS frontend-builder
+FROM node:22-alpine AS frontend-builder
 WORKDIR /app/frontend
 
 # Copy dependencies manifest
@@ -21,7 +21,7 @@ RUN npm run build
 # ==========================================
 # STAGE 2: Build Backend (NestJS)
 # ==========================================
-FROM node:18-alpine AS backend-builder
+FROM node:22-alpine AS backend-builder
 WORKDIR /app
 
 # Copy dependencies manifest
@@ -45,7 +45,7 @@ RUN npm run build
 # ==========================================
 # STAGE 3: Final Runner
 # ==========================================
-FROM node:18-alpine AS runner
+FROM node:22-alpine AS runner
 WORKDIR /app
 
 # Set production environment
