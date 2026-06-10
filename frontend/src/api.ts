@@ -4,6 +4,9 @@ const getBaseURL = () => {
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL;
   }
+  if (import.meta.env.PROD) {
+    return '';
+  }
   if (typeof window !== 'undefined') {
     return `http://${window.location.hostname}:3000`;
   }

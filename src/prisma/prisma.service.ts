@@ -1,5 +1,6 @@
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
+import * as bcryptjs from 'bcryptjs';
 
 @Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
@@ -41,6 +42,23 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
       } catch (err) {
         console.error('Failed to reset/seed database:', err);
       }
+    }
+
+    // Auto-create a test user if no users exist
+    try {
+      const userCount = await this.user.count();
+      if (userCount === 0) {
+        const passwordHash = await bcryptjs.hash('password123', 10);
+        await this.user.create({
+          data: {
+            email: 'test@example.com',
+            passwordHash,
+          },
+        });
+        console.log('Default test user (test@example.com / password123) created.');
+      }
+    } catch (err) {
+      console.error('Failed to auto-create test user:', err);
     }
   }
 
