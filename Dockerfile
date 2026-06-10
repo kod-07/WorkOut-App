@@ -22,6 +22,7 @@ RUN npm run build
 # STAGE 2: Build Backend (NestJS)
 # ==========================================
 FROM node:22-alpine AS backend-builder
+RUN apk add --no-cache openssl libc6-compat
 WORKDIR /app
 
 # Copy dependencies manifest
@@ -46,6 +47,7 @@ RUN npm run build
 # STAGE 3: Final Runner
 # ==========================================
 FROM node:22-alpine AS runner
+RUN apk add --no-cache openssl libc6-compat
 WORKDIR /app
 
 # Set production environment
