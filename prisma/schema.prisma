@@ -1,0 +1,74 @@
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id           String           @id @default(uuid())
+  email        String           @unique
+  passwordHash String
+  createdAt    DateTime         @default(now())
+  routines     WorkoutRoutine[]
+  workoutLogs  WorkoutLog[]
+}
+
+model Exercise {
+  id                String            @id @default(uuid())
+  name              String            @unique
+  muscleGroup       String
+  equipmentType     String            // Barbell, Dumbbell, Machine, Bodyweight, Kettlebell, Cables
+  defaultRestPeriod Int               @default(60) // in seconds
+  setLogs           SetLog[]
+  routineExercises  RoutineExercise[]
+}
+
+model WorkoutRoutine {
+  id               String            @id @default(uuid())
+  userId           String
+  name             String
+  description      String?
+  createdAt        DateTime          @default(now())
+  user             User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  routineExercises RoutineExercise[]
+  workoutLogs      WorkoutLog[]
+}
+
+model RoutineExercise {
+  id         String         @id @default(uuid())
+  routineId  String
+  exerciseId String
+  order      Int            @default(0)
+  sets       Int            @default(3)
+  reps       Int            @default(10)
+  weight     Float          @default(0)
+  routine    WorkoutRoutine @relation(fields: [routineId], references: [id], onDelete: Cascade)
+  exercise   Exercise       @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+}
+
+model WorkoutLog {
+  id         String         @id @default(uuid())
+  userId     String
+  routineId  String?
+  startTime  DateTime       @default(now())
+  endTime    DateTime?
+  notes      String?
+  user       User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  routine    WorkoutRoutine? @relation(fields: [routineId], references: [id], onDelete: SetNull)
+  setLogs    SetLog[]
+}
+
+model SetLog {
+  id           String     @id @default(uuid())
+  workoutLogId String
+  exerciseId   String
+  setNumber    Int
+  weight       Float
+  reps         Int
+  isCompleted  Boolean    @default(false)
+  workoutLog   WorkoutLog @relation(fields: [workoutLogId], references: [id], onDelete: Cascade)
+  exercise     Exercise   @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+}
